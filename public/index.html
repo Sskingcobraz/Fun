@@ -1,0 +1,130 @@
+<!-- Updated index.html with full login modal and Get Started button -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cobraz - The Future of Currency</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="neon-background"></div>
+  <header>
+    <div class="logo" onclick="window.location.href='/dashboard.html'">
+      <img src="/images/cobraz-coin.png" alt="Cobraz Coin" />
+      <h1>COBRAZ</h1>
+    </div>
+    <nav>
+      <button id="loginBtn">Login with Google</button>
+      <button id="openEmailLogin">Login with Email</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>Send. Receive. Dominate.</h2>
+      <p>The most advanced virtual currency system.</p>
+      <button id="getStartedBtn" class="pulse-btn">Get Started</button>
+    </section>
+  </main>
+
+  <!-- Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <h3>Login or Create Account</h3>
+
+    <form id="emailLoginForm">
+      <input type="email" id="emailInput" placeholder="Email" required />
+      <input type="password" id="passwordInput" placeholder="Password" required />
+      <button type="submit">Continue</button>
+    </form>
+
+    <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid #444;" />
+
+    <button class="google-signin" id="googleLoginBtn">
+      <img src="/images/google-icon.png" alt="Google" />
+      Sign in with Google
+    </button>
+  </div>
+</div>
+
+  <!-- Email Login Modal -->
+  <div id="emailLoginModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeEmailLogin">&times;</span>
+      <h2>Email Login</h2>
+      <form id="emailLoginForm">
+        <input type="email" id="emailInput" placeholder="Email" required>
+        <input type="password" id="passwordInput" placeholder="Password" required>
+        <button type="submit">Login</button>
+      </form>
+      <p style="text-align:center; margin-top:1rem;">Don't have an account? <a href="#" id="createAccountLink">Create one</a></p>
+    </div>
+  </div>
+
+  <!-- Firebase CDN (Compat version for browser) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+  <!-- Firebase & Auth logic -->
+  <script src="/js/firebase.js"></script>
+  <script src="/js/auth.js"></script>
+  <script>
+    document.getElementById('getStartedBtn').addEventListener('click', () => {
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          window.location.href = '/dashboard.html';
+        } else {
+          alert('Please login first.');
+        }
+      });
+    });
+
+    const modal = document.getElementById("emailLoginModal");
+    const openBtn = document.getElementById("openEmailLogin");
+    const closeBtn = document.getElementById("closeEmailLogin");
+
+    openBtn.onclick = () => modal.style.display = "block";
+    closeBtn.onclick = () => modal.style.display = "none";
+    window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+
+    // Email Login Logic
+    document.getElementById("emailLoginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("emailInput").value;
+      const password = document.getElementById("passwordInput").value;
+      try {
+        const result = await auth.signInWithEmailAndPassword(email, password);
+        const user = result.user;
+        window.location.href = "/dashboard.html";
+      } catch (err) {
+        if (err.code === 'auth/user-not-found') {
+          // Auto-create account
+          try {
+            const result = await auth.createUserWithEmailAndPassword(email, password);
+            const user = result.user;
+            const userRef = db.collection("users").doc(user.uid);
+            await userRef.set({
+              username: email.split('@')[0],
+              email: email,
+              cobrazBalance: 100,
+              cobrazAddress: generateCobrazAddress(),
+              joinDate: new Date(),
+              isAdmin: false
+            });
+            alert("Account created successfully!");
+            window.location.href = "/dashboard.html";
+          } catch (createErr) {
+            alert("Error: " + createErr.message);
+          }
+        } else {
+          alert("Login failed: " + err.message);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
