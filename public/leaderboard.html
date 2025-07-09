@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cobraz Leaderboard</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="neon-background"></div>
+  <header>
+    <div class="logo">
+      <img src="/images/cobraz-coin.png" alt="Cobraz Coin">
+      <h1>COBRAZ</h1>
+    </div>
+    <nav>
+      <ul>
+        <li><a href="/dashboard.html">Dashboard</a></li>
+        <li><a href="/send.html">Send</a></li>
+        <li><a href="/receive.html">Receive</a></li>
+        <li><a href="/leaderboard.html">Leaderboard</a></li>
+        <li><a href="/profile.html">Profile</a></li>
+        <li><a href="#" id="logoutBtn">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="leaderboard">
+      <h2>Top Cobraz Holders</h2>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Address</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+          <tr>
+            <td colspan="4">Loading leaderboard...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="/js/firebase.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/leaderboard.js"></script>
+</body>
+</html>
